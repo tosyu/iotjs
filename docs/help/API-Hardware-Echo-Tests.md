@@ -30,7 +30,15 @@ TODO
 
 #### SPI
 
-TODO
+To setup plese connect
+* Ardino 13 SCK Pin to test devce SPI Clock pin
+* Arduno 12 MISO Pin to test device SPI MISO pin
+* Arduno 11 MOSI Pin to test device SPI MOSI pin
+* Arduno 10 Chip Select Pin to test device SPI Chip Select
+
+To run the test please run
+
+`test/run_pass/test_spi_echo.js`
 
 #### UART
 
