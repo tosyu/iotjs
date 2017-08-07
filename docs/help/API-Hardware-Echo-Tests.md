@@ -42,7 +42,16 @@ To run the test please run
 
 #### UART
 
-TODO
+To setup please connect
+* Arduino RX pin 0 to Artik 053 TX pin 1 on CON709
+* Arduino TX pin 1 to Artik 053 RX pin 0 on CON709
+* Arduino GND pin to Artik 053 GND pin
+
+To run the test please run
+
+`test/run_pass/test_uart_echo.js`
+
+The test sends string data to arduino echo service and waits for the same string to be sent back
 
 #### ADC
 
