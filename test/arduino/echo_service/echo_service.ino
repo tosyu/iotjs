@@ -4,16 +4,14 @@ const int GPIO_IN = 7;
 const int GPIO_OUT = 8;
 const int MISO_PIN = 12;
 const int PWM_PIN = 9;
-const int PWM_MODE_1_PIN = 6;
-const int PWM_MODE_2_PIN = 5;
+const int PWM_MODE_1_PIN = 5;
+const int PWM_MODE_2_PIN = 6;
 const int ADC_PIN = A0;
 const int ADC_MODE_ON_PIN = 4;
 const int ADC_MODE_OK_PIN = 2;
 const int ADC_MODE_FULL_PIN = 3;
 const int LOOP_DELAY = 1000;
 int gpioVal = 0;
-int pwmMode = 0;
-int pwmMode0 = 0;
 int pwmMode1 = 0;
 int pwmMode2 = 0;
 int adcMode = 0;
@@ -67,25 +65,12 @@ void loop(){
   pwmMode2 = digitalRead(PWM_MODE_2_PIN);
   if (pwmMode1) {
     Serial.println("adc: mode 1");
-    pwmMode = 1;
+    analogWrite(PWM_PIN, 128);
   } else if (pwmMode2) {
     Serial.println("adc: mode 2");
-    pwmMode = 2;
+    analogWrite(PWM_PIN, 255);
   } else {
-    pwmMode = 0;
-  }
-
-  switch (pwmMode) {
-    case 1: // 1/2 signal
-      analogWrite(PWM_PIN, 128);
-      break;
-    case 2: // full signal
-      analogWrite(PWM_PIN, 255);
-      break;
-    case 0: // off
-    default:
-      analogWrite(PWM_PIN, 0);
-      break;
+   analogWrite(PWM_PIN, 0);
   }
 
   // @TEST: VOLTAGE FROM ADC

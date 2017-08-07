@@ -46,7 +46,26 @@ TODO
 
 #### ADC
 
-TODO
+To setup please connect
+* Artik A0 ADC pin on CON705 to low-pass filter Vout
+* Artik 053 pin 23 on CON704 to pin 5 on Arduino
+* Artik 053 pin 21 on CON704 to pin 6 on Arduino
+* Arduino 9 PWM pin to low-pass filter Vin
+* Arduino GND pin to low-pass filter GND
+* Artik 053 GND pin to low-pass filter GND
+
+To run the test please run
+
+`test/run_pass/test_adc_echo.js`
+
+At the test start the adc should read 0 values (or close to 0), then artik requests arduino for half duty cycle which creates ~1.6v on low-pass filter Vout, the adc value should be about ~700, then artik requests for full duty cycle which should generate about ~3.3v which should translate to adc value ~1500. If that was correct then the test is passed.
+
+__Artik 053 note__ There is a bug in the ADC module, which gives first few read attemps at low values, this was fixed in the test code by using median values (this also filters signal imperfections)
+
+Low-Pass filter schematic
+
+![low pass filter](./low-pass-filter.png)
+
 
 #### PWM
 
