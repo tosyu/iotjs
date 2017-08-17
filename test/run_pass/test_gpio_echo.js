@@ -27,11 +27,22 @@ var gpioOut = null,
     gpioIn = null;
 
 
-if(process.platform === 'tizenrt') {
-  GPIO_PIN_OUT = 50;
-  GPIO_PIN_IN = 48;
-} else {
-  assert.fail('Test on platform not supported');
+switch (process.platform) {
+    case 'tizenrt':
+        GPIO_PIN_OUT = 50;
+        GPIO_PIN_IN = 48;
+        break;
+    case 'nuttx':
+        break;
+    case 'linux':
+    default:
+        if (process.iotjs.board === 'RP2') {
+            GPIO_PIN_OUT = 23;
+            GPIO_PIN_IN = 24;
+        } else {
+            assert.fail('Test on platform not supported');
+        }
+        break;
 }
 
 function test() {
@@ -63,8 +74,8 @@ gpioOut = gpio.open({
 }, openCallback);
 
 gpioIn = gpio.open({
-    pin: GPIO_PIN_OUT,
-    direction: gpio.DIRECTION.OUT,
+    pin: GPIO_PIN_IN,
+    direction: gpio.DIRECTION.IN,
     mode: gpio.MODE.NONE
 }, openCallback);
 

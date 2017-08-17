@@ -22,6 +22,7 @@ var outStr = '';
 var i = 0;
 var inArray = [0, 0, 0];
 var outArray = [0, 0, 0];
+var config = {};
 
 for (i = 0; i < inArray.length; ++i) {
     if (inStr[i] && inArray[i] !== undefined) {
@@ -29,9 +30,22 @@ for (i = 0; i < inArray.length; ++i) {
     }
 }
 
-var dev = spi.open({
-    bus: 1
-}, function (err) {
+switch (process.platform) {
+    case 'tizenrt':
+        config.bus = 1;
+        break;
+    case 'nuttx':
+        break;
+    case 'linux':
+        if (process.iotjs.board === 'RP2') {
+            config.device = '/dev/spidev0.0';
+        } else {
+            assert.fail('Test on platform not supported');
+        }
+        break;
+}
+
+var dev = spi.open(config, function (err) {
     assert(!err, 'SPI opened');
     if (!err) {
         dev.transfer(inArray, outArray, function (err) {

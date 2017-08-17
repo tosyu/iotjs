@@ -24,7 +24,11 @@ var configuration = {
 };
 
 if (process.platform === 'linux') {
-  configuration.device = '/dev/ttyS0';
+  if (process.iotjs.board === 'RP2') {
+    configuration.device = '/dev/serial0';
+  } else {
+    configuration.device = '/dev/ttyS0';
+  }
 } else if (process.platform === 'nuttx') {
   configuration.device = '/dev/ttyS1';
 } else if (process.platform === 'tizenrt') {

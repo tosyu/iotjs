@@ -18,7 +18,22 @@ var assert = require('assert');
 var UART = require('uart');
 var uart = new UART();
 var DATA = 'hello world';
-var DEVICE = '/dev/ttyS1';
+var DEVICE = '';
+
+switch (process.platform) {
+    case 'tizenrt':
+        DEVICE = '/dev/ttyS1';
+        break;
+    case 'nuttx':
+        break;
+    case 'linux':
+        if (process.iotjs.board === 'RP2') {
+            DEVICE = '/dev/serial0';
+        } else {
+            assert.fail('Test on platform not supported');
+        }
+        break;
+}
 
 console.log('uart: opening');
 var res = uart.open({
@@ -28,7 +43,9 @@ var res = uart.open({
 }, function (err) {
     var onData = function (data) {
         console.log('uart: received ' + data);
-        assert(data == DATA, 'uart: response was ok');
+        setTimeout(function () { // @fixme: onData caller fails test when exception thrown
+            assert(data == DATA, 'uart: response was ok');
+        }, 0);
         console.log('uart: closing');
         res.closeSync();
     };
