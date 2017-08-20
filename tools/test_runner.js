@@ -121,10 +121,24 @@ Runner.prototype.run = function() {
   var skip = this.test['skip'];
   if (skip) {
     if ((skip.indexOf('all') >= 0) || (skip.indexOf(this.driver.os) >= 0)
-      || (skip.indexOf(this.driver.stability) >= 0)) {
+      || (skip.indexOf(this.driver.requirements) >= 0)) {
       this.finish('skip');
       return;
     }
+  }
+
+  var dependencies = this.test['dependencies'] || [];
+  var dependenciesFailed = [];
+  for (var i = 0, l = dependencies.length; i < l; ++i) {
+    if (this.driver.dependecies.indexOf(dependencies[i]) === -1) {
+      dependenciesFailed.push(dependencies[i]);
+    }
+  }
+
+  if (dependenciesFailed.length > 0) {
+    this.test.reason = this.test.reason || '[' + dependenciesFailed.join(', ') + '] dependencies is not met';
+    this.finish('skip');
+    return;
   }
 
   if (this.skipModuleLength && this.checkSkipModule()) {
