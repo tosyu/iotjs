@@ -42,7 +42,7 @@ iotjs_string_t iotjs_string_create_with_size(const char* data, size_t size) {
     IOTJS_ASSERT(data != NULL);
     _this->data = iotjs_buffer_allocate(size + 1);
     memcpy(_this->data, data, size);
-    *((char*)_this->data + size) = 0;
+    *((char*)_this->data + size) = '\0';
   } else {
     _this->data = NULL;
   }
@@ -61,7 +61,7 @@ iotjs_string_t iotjs_string_create_with_buffer(char* buffer, size_t size) {
     IOTJS_ASSERT(buffer != NULL);
     _this->data = iotjs_buffer_allocate(size + 1);
     memcpy(_this->data, buffer, size);
-    *((char*)_this->data + size) = 0;
+    *((char*)_this->data + size) = '\0';
     iotjs_buffer_release(buffer);
   } else {
     _this->data = NULL;
@@ -116,7 +116,7 @@ void iotjs_string_append(iotjs_string_t* str, const char* data, size_t size) {
   }
 
   memcpy(_this->data + _this->size, data, size);
-  *((char*)_this->data + _this->size + size) = 0;
+  *((char*)_this->data + _this->size + size) = '\0';
   _this->size += size;
 }
 
