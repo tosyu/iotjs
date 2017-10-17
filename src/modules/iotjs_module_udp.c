@@ -79,12 +79,14 @@ iotjs_jval_t* iotjs_udpwrap_jobject(iotjs_udpwrap_t* udpwrap) {
 #define THIS iotjs_send_reqwrap_t* send_reqwrap
 
 iotjs_send_reqwrap_t* iotjs_send_reqwrap_create(const iotjs_jval_t* jcallback,
+                                                void* req_data,
                                                 const size_t msg_size) {
   iotjs_send_reqwrap_t* send_reqwrap = IOTJS_ALLOC(iotjs_send_reqwrap_t);
   IOTJS_VALIDATED_STRUCT_CONSTRUCTOR(iotjs_send_reqwrap_t, send_reqwrap);
 
   iotjs_reqwrap_initialize(&_this->reqwrap, jcallback, (uv_req_t*)&_this->req);
   _this->msg_size = msg_size;
+  _this->req_data = req_data;
 
   return send_reqwrap;
 }
@@ -92,6 +94,7 @@ iotjs_send_reqwrap_t* iotjs_send_reqwrap_create(const iotjs_jval_t* jcallback,
 
 static void iotjs_send_reqwrap_destroy(THIS) {
   IOTJS_VALIDATED_STRUCT_DESTRUCTOR(iotjs_send_reqwrap_t, send_reqwrap);
+  iotjs_buffer_release(_this->req_data);
   iotjs_reqwrap_destroy(&_this->reqwrap);
   IOTJS_RELEASE(send_reqwrap);
 }
@@ -299,10 +302,14 @@ JHANDLER_FUNCTION(Send) {
   char* buffer = iotjs_bufferwrap_buffer(buffer_wrap);
   size_t len = iotjs_bufferwrap_length(buffer_wrap);
 
-  iotjs_send_reqwrap_t* req_wrap = iotjs_send_reqwrap_create(jcallback, len);
+  void* req_data = iotjs_buffer_allocate(len);
+  memcpy(req_data, buffer, len);
+
+  iotjs_send_reqwrap_t* req_wrap =
+      iotjs_send_reqwrap_create(jcallback, req_data, len);
 
   uv_buf_t buf;
-  buf.base = buffer;
+  buf.base = req_data;
   buf.len = len;
 
   char addr[sizeof(sockaddr_in6)];
